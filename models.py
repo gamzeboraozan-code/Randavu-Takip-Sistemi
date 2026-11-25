@@ -1,8 +1,7 @@
-
 class Musteri:
     def __init__(self, ad, telefon=""):
-        self.ad = ad
-        self.telefon = telefon
+        self.ad = ad.strip()
+        self.telefon = telefon.strip()
 
 
 class Randevu(Musteri):
@@ -17,7 +16,7 @@ class Randevu(Musteri):
 
     def bilgileri_goster(self):
         print("Müşteri:", self.ad)
-        print("Telefon:", self.telefon)
+        print("Telefon:", self.telefon or "Belirtilmedi")
         print("Tarih:", self.tarih)
         print("Saat:", self.saat)
         print("Hizmet:", self.hizmet)
