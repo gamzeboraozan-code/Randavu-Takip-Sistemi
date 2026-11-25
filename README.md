@@ -6,6 +6,10 @@ Bu proje, sağlıklı yaşam kompleksleri için geliştirilmiş Python tabanlı 
 
 Sistem sayesinde müşterilerin randevuları kaydedilebilir, listelenebilir, aranabilir, iptal edilebilir ve tamamlandı olarak işaretlenebilir.
 
+## Projenin Amacı
+
+Bu projenin amacı, sağlıklı yaşam komplekslerinde randevu süreçlerini kolaylaştırmak, müşteri kayıtlarını düzenli tutmak ve işletmenin gelir ve kâr takibini daha verimli hale getirmektir.
+
 ## Projenin Özellikleri
 
 - Randevu ekleme
