@@ -1,4 +1,3 @@
-
 import json
 import os
 from models import Randevu
@@ -35,12 +34,22 @@ ornek_randevular = [
 
 def ornek_verileri_olustur():
     if os.path.exists(DOSYA_ADI):
-        with open(DOSYA_ADI, "r", encoding="utf-8") as dosya:
-            mevcut_veriler = json.load(dosya)
+        try:
+            with open(DOSYA_ADI, "r", encoding="utf-8") as dosya:
+                mevcut_veriler = json.load(dosya)
 
-        if mevcut_veriler:
-            print("JSON dosyasında zaten kayıt bulunuyor.")
-            print("Mevcut kayıtlar korunmuştur.")
+            if not isinstance(mevcut_veriler, list):
+                print("JSON dosyasının veri biçimi hatalı!")
+                return
+
+            if mevcut_veriler:
+                print("JSON dosyasında zaten kayıt bulunuyor.")
+                print("Mevcut kayıtlar korunmuştur.")
+                return
+
+        except (json.JSONDecodeError, OSError, UnicodeError):
+            print("JSON dosyası okunamadı!")
+            print("Mevcut dosyada değişiklik yapılmadı.")
             return
 
     randevular = []
@@ -58,7 +67,16 @@ def ornek_verileri_olustur():
     with open(DOSYA_ADI, "w", encoding="utf-8") as dosya:
         json.dump(randevular, dosya, ensure_ascii=False, indent=4)
 
-    print("20 örnek randevu başarıyla oluşturuldu!")
+    aktif = sum(1 for r in randevular if r["durum"] == "Aktif")
+    tamamlanan = sum(1 for r in randevular if r["durum"] == "Tamamlandı")
+    iptal = sum(1 for r in randevular if r["durum"] == "İptal Edildi")
+
+    print(f"{len(randevular)} örnek randevu başarıyla oluşturuldu!")
+
+    print("\n--- RANDEVU ÖZETİ ---")
+    print(f"Aktif randevular: {aktif}")
+    print(f"Tamamlanan randevular: {tamamlanan}")
+    print(f"İptal edilen randevular: {iptal}")
 
 
 if __name__ == "__main__":
