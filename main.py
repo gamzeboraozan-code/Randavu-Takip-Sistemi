@@ -1,3 +1,5 @@
+# Python ile Randevu Takip Sistemi
+# Randevu işlemlerini ve gelir-kâr hesaplamalarını yöneten ana program.
 
 from models import Randevu
 from datetime import datetime
@@ -6,10 +8,13 @@ import os
 import numpy as np
 import pandas as pd
 
+# Randevuların tutulduğu liste
 randevular = []
 
+# Randevu kayıtlarının saklandığı dosya
 DOSYA_ADI = "randevular.json"
 
+# Hizmet ücretleri ve maliyet bilgileri
 hizmetler = {
     "Masaj": {"ucret": 1000, "maliyet": 400},
     "Cilt Bakımı": {"ucret": 800, "maliyet": 300},
@@ -18,6 +23,7 @@ hizmetler = {
 }
 
 
+# Randevuları JSON dosyasına kaydeder.
 def dosyaya_kaydet():
     veriler = [r.sozluk_yap() for r in randevular]
 
@@ -25,6 +31,7 @@ def dosyaya_kaydet():
         json.dump(veriler, dosya, ensure_ascii=False, indent=4)
 
 
+# Daha önce kaydedilen randevuları dosyadan yükler.
 def dosyadan_yukle():
     global randevular
 
@@ -52,6 +59,7 @@ def dosyadan_yukle():
         print("Kayıt dosyası okunamadı!")
 
 
+# Yeni müşteri randevusu oluşturur.
 def randevu_ekle():
     print("\n--- RANDEVU EKLE ---")
 
@@ -70,6 +78,7 @@ def randevu_ekle():
         saat = input("Saat (SS:DD): ")
         datetime.strptime(saat, "%H:%M")
 
+        # Geçmiş tarihlere randevu verilmesini engeller.
         if girilen_tarih.date() < datetime.today().date():
             print("Geçmiş bir tarihe randevu oluşturulamaz!")
             return
@@ -85,6 +94,7 @@ def randevu_ekle():
             print("Geçersiz hizmet seçimi!")
             return
 
+        # Aynı tarih ve saatte aktif randevu olup olmadığını kontrol eder.
         for randevu in randevular:
             if (randevu.tarih == tarih
                     and randevu.saat == saat
@@ -110,6 +120,7 @@ def randevu_ekle():
         print("Hatalı tarih veya saat girdiniz!")
 
 
+# Sistemde kayıtlı tüm randevuları listeler.
 def randevulari_listele():
     print("\n--- RANDEVU LİSTESİ ---")
 
@@ -122,6 +133,7 @@ def randevulari_listele():
         randevu.bilgileri_goster()
 
 
+# Müşteri adına göre randevu araması yapar.
 def randevu_ara():
     print("\n--- RANDEVU ARA ---")
 
@@ -145,6 +157,7 @@ def randevu_ara():
         randevu.bilgileri_goster()
 
 
+# Seçilen aktif randevuyu iptal eder.
 def randevu_iptal():
     print("\n--- RANDEVU İPTAL ET ---")
 
@@ -175,6 +188,7 @@ def randevu_iptal():
         print("Lütfen geçerli bir numara giriniz!")
 
 
+# Seçilen randevuyu tamamlandı olarak işaretler.
 def randevu_tamamla():
     print("\n--- RANDEVU TAMAMLA ---")
 
@@ -205,6 +219,7 @@ def randevu_tamamla():
         print("Lütfen geçerli bir numara giriniz!")
 
 
+# Tamamlanan randevuların gelir ve kâr bilgilerini hesaplar.
 def gelir_kar_hesapla():
     print("\n--- GELİR VE KÂR RAPORU ---")
 
@@ -227,6 +242,7 @@ def gelir_kar_hesapla():
     kar = gelir - maliyet
     kar_yuzdesi = (kar / gelir) * 100 if gelir > 0 else 0
 
+    # NumPy ile ortalama hizmet ücretini hesaplar.
     ucretler = np.array([r.ucret for r in tamamlananlar])
     ortalama = np.mean(ucretler)
 
@@ -247,6 +263,7 @@ def gelir_kar_hesapla():
             "Kar": r.ucret - hizmetler[r.hizmet]["maliyet"]
         })
 
+    # Pandas ile hizmet türlerine göre rapor oluşturur.
     tablo = pd.DataFrame(veriler)
 
     rapor = tablo.groupby("Hizmet").agg(
@@ -260,6 +277,7 @@ def gelir_kar_hesapla():
     print(rapor.to_string())
 
 
+# Kullanıcının işlem yapabileceği ana menüyü oluşturur.
 def ana_menu():
     while True:
         print("\n================================")
@@ -301,5 +319,6 @@ def ana_menu():
             print("Hatalı seçim! Tekrar deneyiniz.")
 
 
+# Kayıtlı verileri yükler ve programı başlatır.
 dosyadan_yukle()
 ana_menu()
